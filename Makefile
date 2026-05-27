@@ -19,5 +19,8 @@ check: ## Run type checking and lint checks
 build-lib: ## Build core library package
 	cd packages/core && python -m build
 
+docs: ## Generate project documentation message
+	@echo "Documentation is available in markdown format under docs/ directory."
+
 clean: ## Clean up temporary and build directories
 	rm -rf .pytest_cache .coverage htmlcov .mypy_cache build dist packages/core/build packages/core/dist packages/core/*.egg-info
