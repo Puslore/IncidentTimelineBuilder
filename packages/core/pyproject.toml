@@ -1,0 +1,13 @@
+[build-system]
+requires = ['setuptools>=68.0', 'wheel']
+build-backend = 'setuptools.backends._legacy:_Backend'
+
+[project]
+name = 'timeline-core'
+version = '0.1.0'
+description = 'Pure domain logic for Incident Timeline Builder'
+requires-python = '>=3.12'
+license = {text = 'MIT'}
+
+[tool.setuptools.packages.find]
+where = ['src']
