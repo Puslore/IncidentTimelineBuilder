@@ -371,3 +371,4 @@ docs/_generated/
 !tests/fixtures/*.log
 !tests/fixtures/**/*.log
 !scripts
+mkdocs.yml.cached
