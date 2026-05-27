@@ -20,6 +20,12 @@ sources:
     pattern: '^(?P<timestamp>\d{4}-\d{2}-\d{2}T[\d:.]+Z)\s+(?P<level>\w+)\s+\[(?P<component>[^\]]+)\]\s+(?P<message>.+)$'
     timezone: UTC
 
+  - name: nginx-error
+    file: tests/fixtures/nginx-error.log
+    format: custom
+    pattern: '^(?P<timestamp>\d{4}/\d{2}/\d{2} \d{2}:\d{2}:\d{2})\s+\[(?P<level>\w+)\]\s+(?:\d+#\d+:\s+\*\d+\s+)?(?P<message>[^,]+)(?:,\s+client:\s+(?P<client>[^,]+))?.*$'
+    timezone: Europe/Moscow
+
 filters:
   default_level: DEBUG
   exclude_sources: []
