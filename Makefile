@@ -1,4 +1,4 @@
-.PHONY: help setup test coverage check build-lib clean
+.PHONY: help setup test coverage check build-lib docs compose-up compose-down install-lib-local publish-lib clean
 
 help: ## Display this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
@@ -19,8 +19,8 @@ check: ## Run type checking and lint checks
 build-lib: ## Build core library package
 	cd packages/core && python -m build
 
-docs: ## Generate project documentation message
-	@echo "Documentation is available in markdown format under docs/ directory."
+docs: ## Generate project documentation (Sphinx HTML build)
+	sphinx-build -b html docs/ docs/_build/html
 
 compose-up: ## Run the timeline builder inside docker container using compose
 	docker compose -f infra/compose.yaml up --build
@@ -35,4 +35,5 @@ publish-lib: ## Publish core library package to PyPI (TestPyPI configuration)
 	python -m twine upload --repository testpypi packages/core/dist/*
 
 clean: ## Clean up temporary and build directories
-	rm -rf .pytest_cache .coverage htmlcov .mypy_cache build dist packages/core/build packages/core/dist packages/core/*.egg-info
+	rm -rf .pytest_cache .coverage htmlcov .mypy_cache build dist packages/core/build packages/core/dist packages/core/*.egg-info docs/_build
+
