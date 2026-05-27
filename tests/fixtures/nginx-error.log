@@ -1,0 +1,2 @@
+2026/05/27 14:23:10 [error] 1234#0: *5 upstream timed out (110: Connection timed out) while connecting to upstream, client: 10.0.0.5, server: api.example.com, upstream: "http://127.0.0.1:8080/api/orders"
+2026/05/27 14:23:22 [warn] 1234#0: *8 a]n upstream response is buffered to a temporary file /var/cache/nginx/proxy_temp/1/00/0000000001

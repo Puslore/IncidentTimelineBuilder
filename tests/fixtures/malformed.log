@@ -1,0 +1,3 @@
+this is not a log line at all
+[2026-13-45 99:99:99] INVALID timestamp
+2026-05-27T11:23:07.000Z WARN one valid line among garbage

@@ -1,0 +1,20 @@
+sources:
+  - name: missing-file
+    file: tests/fixtures/does-not-exist.log
+    format: nginx-combined
+    timezone: Europe/Moscow
+
+  - name: bad-format
+    file: tests/fixtures/nginx-access.log
+    format: unknown-format-xyz
+    timezone: UTC
+
+  - name: bad-timezone
+    file: tests/fixtures/nginx-access.log
+    format: nginx-combined
+    timezone: Mars/Olympus
+
+  - name: missing-file
+    file: tests/fixtures/syslog.log
+    format: syslog
+    timezone: Europe/Moscow
