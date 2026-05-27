@@ -9,19 +9,14 @@ from typing import Any
 import typer
 import yaml
 
-from timeline_core import NginxCombinedParser
-from timeline_core.exceptions import ParseError
+from timeline_core import get_parser
+from timeline_core.exceptions import ParseError, InvalidFormatError
 from timeline_core.models import LogEvent
-from timeline_core.parsers.base import BaseParser
 
 app = typer.Typer(
     name='timeline-builder',
     help='Build a unified incident timeline from multiple log sources.',
 )
-
-_PARSERS: dict[str, type[BaseParser]] = {
-    'nginx-combined': NginxCombinedParser,
-}
 
 
 def _event_to_dict(event: LogEvent) -> dict[str, Any]:
@@ -103,9 +98,12 @@ def build(
     for src in sources:
         fmt = src.get('format', '')
         name = src.get('name', fmt)
-        parser_cls = _PARSERS.get(fmt)
+        timezone_str = src.get('timezone', 'UTC')
+        pattern = src.get('pattern', '')
 
-        if parser_cls is None:
+        try:
+            parser = get_parser(fmt, source_name=name, timezone_str=timezone_str, pattern=pattern)
+        except InvalidFormatError:
             typer.echo(
                 f'Warning: unsupported format {fmt!r}, '
                 f'skipping source {name!r}',
@@ -115,6 +113,12 @@ def build(
 
         file_path = Path(src.get('file', ''))
         if not file_path.exists():
+            if file_path.suffix == '.jsonl':
+                fallback_path = file_path.with_suffix('.json')
+                if fallback_path.exists():
+                    file_path = fallback_path
+
+        if not file_path.exists():
             typer.echo(
                 f'Warning: file not found: {file_path}, '
                 f'skipping source {name!r}',
@@ -122,18 +126,39 @@ def build(
             )
             continue
 
-        parser = parser_cls(source_name=name)
+        if fmt == 'journald-json':
+            with open(file_path, encoding='utf-8') as fh:
+                content = fh.read()
 
-        with open(file_path, encoding='utf-8') as fh:
-            for line_num, raw_line in enumerate(fh, 1):
-                stripped = raw_line.strip()
-                if not stripped:
-                    continue
+            decoder = json.JSONDecoder()
+            pos = 0
+            line_num = 1
+            while pos < len(content):
+                chunk = content[pos:].lstrip()
+                if not chunk:
+                    break
+                pos = len(content) - len(chunk)
                 try:
-                    event = parser.parse(stripped, line_number=line_num)
+                    obj, idx = decoder.raw_decode(chunk)
+                    json_str = json.dumps(obj)
+                    event = parser.parse(json_str, line_number=line_num)
                     all_events.append(event)
-                except ParseError:
-                    continue
+                    pos += idx
+                    line_num += 1
+                except Exception:
+                    pos += 1
+                    line_num += 1
+        else:
+            with open(file_path, encoding='utf-8') as fh:
+                for line_num, raw_line in enumerate(fh, 1):
+                    stripped = raw_line.strip()
+                    if not stripped:
+                        continue
+                    try:
+                        event = parser.parse(stripped, line_number=line_num)
+                        all_events.append(event)
+                    except ParseError:
+                        continue
 
     if not all_events:
         typer.echo('Warning: no events parsed from any source', err=True)
