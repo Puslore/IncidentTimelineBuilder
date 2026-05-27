@@ -1,0 +1,10 @@
+name: incident-timeline-builder
+
+services:
+  timeline:
+    build:
+      context: ..
+      dockerfile: Dockerfile
+    volumes:
+      - ../tests/fixtures:/workspace/tests/fixtures:ro
+    command: ["tests/fixtures/sources.valid.yaml"]
