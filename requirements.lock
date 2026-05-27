@@ -1,0 +1,17 @@
+annotated-doc==0.0.4
+colorama==0.4.6
+coverage==7.14.1
+iniconfig==2.3.0
+markdown-it-py==4.2.0
+mdurl==0.1.2
+packaging==26.2
+pluggy==1.6.0
+pygments==2.20.0
+pytest-cov==7.1.0
+pytest==9.0.3
+python-dateutil==2.9.0.post0
+PyYAML==6.0.3
+rich==15.0.0
+shellingham==1.5.4
+six==1.17.0
+typer==0.26.2
