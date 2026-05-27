@@ -1,26 +1,41 @@
-.PHONY: help setup test coverage check build-lib docs compose-up compose-down install-lib-local publish-lib clean
+VENV = .venv
+VENV_BIN_DIR := $(shell python -c "import sys; print('Scripts' if sys.platform == 'win32' else 'bin')" 2>/dev/null || python3 -c "import sys; print('Scripts' if sys.platform == 'win32' else 'bin')" 2>/dev/null || echo bin)
+VENV_BIN = $(VENV)/$(VENV_BIN_DIR)
+
+PYTHON = $(VENV_BIN)/python
+PIP = $(VENV_BIN)/pip
+
+.PHONY: help setup shell test coverage check build-lib docs compose-up compose-down install-lib-local publish-lib clean
 
 help: ## Display this help message
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-15s\033[0m %s\n", $$1, $$2}'
 
-setup: ## Set up local virtual environment and install dependencies
-	python -m venv .venv
-	.venv/bin/pip install -r requirements-dev.txt
+$(VENV_BIN)/activate: requirements-dev.txt
+	python -m venv $(VENV)
+	$(PIP) install --upgrade pip
+	$(PIP) install -r requirements-dev.txt
+	touch $(VENV_BIN)/activate
 
-test: ## Run unit and smoke tests
-	PYTHONPATH=packages/core/src pytest tests/ -v
+setup: $(VENV_BIN)/activate ## Set up local virtual environment and install dependencies
 
-coverage: ## Run tests and print coverage report
-	PYTHONPATH=packages/core/src pytest tests/ -v --cov=packages/core/src/timeline_core --cov-report=term-missing
+shell: $(VENV_BIN)/activate ## Enter the virtual environment shell
+	@echo "entering venv, type exit to quit"
+	@PATH=$(shell pwd)/$(VENV_BIN):$$PATH bash
 
-check: ## Run type checking and lint checks
-	PYTHONPATH=packages/core/src mypy packages/core/src/timeline_core
+test: $(VENV_BIN)/activate ## Run unit and smoke tests
+	PYTHONPATH=packages/core/src $(PYTHON) -m pytest tests/ -v
 
-build-lib: ## Build core library package
-	cd packages/core && python -m build
+coverage: $(VENV_BIN)/activate ## Run tests and print coverage report
+	PYTHONPATH=packages/core/src $(PYTHON) -m pytest tests/ -v --cov=packages/core/src/timeline_core --cov-report=term-missing
 
-docs: ## Generate project documentation (Sphinx HTML build)
-	sphinx-build -b html docs/ docs/_build/html
+check: $(VENV_BIN)/activate ## Run type checking and lint checks
+	PYTHONPATH=packages/core/src $(PYTHON) -m mypy packages/core/src/timeline_core
+
+build-lib: $(VENV_BIN)/activate ## Build core library package
+	$(PYTHON) -m build packages/core
+
+docs: $(VENV_BIN)/activate ## Generate project documentation (Sphinx HTML build)
+	$(PYTHON) -m sphinx -b html docs/ docs/_build/html
 
 compose-up: ## Run the timeline builder inside docker container using compose
 	docker compose -f infra/compose.yaml up --build
@@ -28,11 +43,11 @@ compose-up: ## Run the timeline builder inside docker container using compose
 compose-down: ## Shut down the docker compose services
 	docker compose -f infra/compose.yaml down
 
-install-lib-local: ## Install built core library wheel locally into active environment
-	pip install --force-reinstall packages/core/dist/*.whl
+install-lib-local: $(VENV_BIN)/activate ## Install built core library wheel locally into active environment
+	$(PIP) install --force-reinstall packages/core/dist/*.whl
 
-publish-lib: ## Publish core library package to PyPI (TestPyPI configuration)
-	python -m twine upload --repository testpypi packages/core/dist/*
+publish-lib: $(VENV_BIN)/activate ## Publish core library package to PyPI (TestPyPI configuration)
+	$(PYTHON) -m twine upload --repository testpypi packages/core/dist/*
 
 clean: ## Clean up temporary and build directories
 	rm -rf .pytest_cache .coverage htmlcov .mypy_cache build dist packages/core/build packages/core/dist packages/core/*.egg-info docs/_build
