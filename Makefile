@@ -28,5 +28,11 @@ compose-up: ## Run the timeline builder inside docker container using compose
 compose-down: ## Shut down the docker compose services
 	docker compose -f infra/compose.yaml down
 
+install-lib-local: ## Install built core library wheel locally into active environment
+	pip install --force-reinstall packages/core/dist/*.whl
+
+publish-lib: ## Publish core library package to PyPI (TestPyPI configuration)
+	python -m twine upload --repository testpypi packages/core/dist/*
+
 clean: ## Clean up temporary and build directories
 	rm -rf .pytest_cache .coverage htmlcov .mypy_cache build dist packages/core/build packages/core/dist packages/core/*.egg-info
