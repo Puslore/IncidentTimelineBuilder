@@ -18,6 +18,7 @@ def test_cli_smoke_success() -> None:
 
     cli_path = project_root / 'app' / 'cli' / 'main.py'
     config_path = project_root / 'tests' / 'fixtures' / 'sources.valid.yaml'
+    expected_path = project_root / 'tests' / 'fixtures' / 'expected' / 'timeline.json'
 
     result = subprocess.run(
         [sys.executable, str(cli_path), str(config_path)],
@@ -29,24 +30,10 @@ def test_cli_smoke_success() -> None:
 
     assert result.returncode == 0
 
-    data = json.loads(result.stdout)
-    assert 'timeline' in data
-    assert 'stats' in data
+    # Parse stdout and expected JSON
+    actual_data = json.loads(result.stdout)
+    with open(expected_path, encoding='utf-8') as fh:
+        expected_data = json.load(fh)
 
-    timeline = data['timeline']
-    stats = data['stats']
-
-    assert len(timeline) == 4
-    for event in timeline:
-        assert event['source'] == 'nginx-access'
-        assert event['level'] in ('INFO', 'ERROR')
-        assert event['timestamp'].endswith('+00:00')
-
-    timestamps = [e['timestamp'] for e in timeline]
-    assert timestamps == sorted(timestamps)
-
-    assert stats['total_events'] == 4
-    assert stats['by_source'] == {'nginx-access': 4}
-    assert stats['by_level'] == {'INFO': 3, 'ERROR': 1}
-    assert stats['time_range']['start'] == '2026-05-27T11:23:05+00:00'
-    assert stats['time_range']['end'] == '2026-05-27T11:23:25+00:00'
+    # Assert they are equal
+    assert actual_data == expected_data
