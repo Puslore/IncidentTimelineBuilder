@@ -26,26 +26,46 @@ make install-lib-local
 ```
 
 ### 3. Run the CLI Tool
-Once the package is installed, run the CLI utility directly:
-```bash
-python app/cli/main.py tests/fixtures/sources.valid.yaml
-```
-*(Alternatively, you can run `PYTHONPATH=packages/core/src python app/cli/main.py tests/fixtures/sources.valid.yaml` without installing the package).*
 
-### 4. Run with Docker Compose
-To run the timeline builder inside a Docker container:
+**Quick parse** — pass log files directly, no config needed:
 ```bash
-make compose-up
+# Auto-detects format from file name:
+python app/cli/main.py parse /var/log/nginx/access.log
+
+# Explicit format + timezone:
+python app/cli/main.py parse /var/log/syslog --format syslog --timezone Europe/Moscow
+
+# Multiple files at once:
+python app/cli/main.py parse nginx.log syslog.log journald.json
+
+# Save result to file:
+python app/cli/main.py parse access.log > timeline.json
+```
+
+**Advanced: YAML config** — for complex multi-source setups:
+```bash
+python app/cli/main.py build sources.yaml
+```
+
+*(Run without installing the package: prefix with `PYTHONPATH=packages/core/src`)*
+
+### 4. Run with Docker
+```bash
+# Parse files directly:
+docker compose -f infra/compose.yaml up --build
+
+# Or with docker run — mount your logs and parse:
+docker run --rm -v /var/log:/logs timeline-builder parse /logs/nginx/access.log --format nginx-combined
 ```
 
 ## Supported Log Formats
 
-| Format           | Status      |
-|------------------|-------------|
-| nginx-combined   | ✅ supported |
-| syslog           | ✅ supported |
-| journald-json    | ✅ supported |
-| custom (regex)   | ✅ supported |
+| Format           | `--format` value | Auto-detected by filename | Status      |
+|------------------|------------------|--------------------------|-------------|
+| nginx-combined   | `nginx-combined` | `*nginx*`                | ✅ supported |
+| syslog           | `syslog`         | `*syslog*`               | ✅ supported |
+| journald-json    | `journald-json`  | `*journal*`, `*.json`    | ✅ supported |
+| custom (regex)   | `custom`         | —                        | ✅ supported |
 
 ## Project Structure
 
