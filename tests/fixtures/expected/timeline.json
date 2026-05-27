@@ -12,31 +12,21 @@
             }
         },
         {
-            "timestamp": "2026-05-27T11:23:02.500000+00:00",
-            "source": "journald",
-            "level": "INFO",
-            "message": "Accepted publickey for alice from 192.168.1.10",
-            "metadata": {
-                "host": "webhost01",
-                "priority": 6,
-                "identifier": "sshd"
-            }
-        },
-        {
             "timestamp": "2026-05-27T11:23:05+00:00",
             "source": "nginx-access",
             "level": "INFO",
             "message": "GET /api/users HTTP/1.1 200 1234",
             "metadata": {
                 "client": "192.168.1.10",
-                "user": "alice"
+                "user": "alice",
+                "referer": "https://example.com"
             }
         },
         {
             "timestamp": "2026-05-27T11:23:10+00:00",
             "source": "nginx-error",
             "level": "ERROR",
-            "message": "upstream timed out while connecting to upstream",
+            "message": "upstream timed out (110: Connection timed out) while connecting to upstream",
             "metadata": {
                 "client": "10.0.0.5"
             }
@@ -47,7 +37,9 @@
             "level": "ERROR",
             "message": "POST /api/orders HTTP/1.1 500 89",
             "metadata": {
-                "client": "10.0.0.5"
+                "client": "10.0.0.5",
+                "user": "-",
+                "referer": "-"
             }
         },
         {
@@ -66,8 +58,16 @@
             "message": "GET /api/users HTTP/1.1 200 1234",
             "metadata": {
                 "client": "192.168.1.10",
-                "user": "alice"
+                "user": "alice",
+                "referer": "https://example.com"
             }
+        },
+        {
+            "timestamp": "2026-05-27T11:23:22+00:00",
+            "source": "nginx-error",
+            "level": "WARN",
+            "message": "a]n upstream response is buffered to a temporary file /var/cache/nginx/proxy_temp/1/00/0000000001",
+            "metadata": {}
         },
         {
             "timestamp": "2026-05-27T11:23:25+00:00",
@@ -76,7 +76,8 @@
             "message": "GET /health HTTP/1.1 200 2",
             "metadata": {
                 "client": "10.0.0.7",
-                "user": "bob"
+                "user": "bob",
+                "referer": "-"
             }
         },
         {
@@ -108,25 +109,63 @@
                 "process": "systemd",
                 "pid": 1
             }
+        },
+        {
+            "timestamp": "2026-05-28T11:23:02.500000+00:00",
+            "source": "journald",
+            "level": "INFO",
+            "message": "Accepted publickey for alice from 192.168.1.10",
+            "metadata": {
+                "host": "webhost01",
+                "priority": 6,
+                "identifier": "sshd",
+                "pid": 1234
+            }
+        },
+        {
+            "timestamp": "2026-05-28T11:23:10+00:00",
+            "source": "journald",
+            "level": "ERROR",
+            "message": "database connection pool exhausted",
+            "metadata": {
+                "host": "webhost01",
+                "priority": 3,
+                "identifier": "app",
+                "pid": 9876
+            }
+        },
+        {
+            "timestamp": "2026-05-28T11:23:20+00:00",
+            "source": "journald",
+            "level": "WARNING",
+            "message": "Unit app.service entered failed state",
+            "metadata": {
+                "host": "webhost01",
+                "priority": 4,
+                "identifier": "systemd",
+                "pid": 1
+            }
         }
     ],
     "stats": {
-        "total_events": 11,
+        "total_events": 14,
         "by_source": {
-            "nginx-access": 4,
-            "nginx-error": 1,
             "syslog": 3,
-            "journald": 1,
-            "app": 2
+            "nginx-access": 4,
+            "nginx-error": 2,
+            "app": 2,
+            "journald": 3
         },
         "by_level": {
             "INFO": 7,
-            "ERROR": 3,
-            "FATAL": 1
+            "ERROR": 4,
+            "WARN": 1,
+            "FATAL": 1,
+            "WARNING": 1
         },
         "time_range": {
             "start": "2026-05-27T11:23:01+00:00",
-            "end": "2026-05-27T11:23:35+00:00"
+            "end": "2026-05-28T11:23:20+00:00"
         }
     }
 }
