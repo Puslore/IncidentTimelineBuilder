@@ -22,5 +22,11 @@ build-lib: ## Build core library package
 docs: ## Generate project documentation message
 	@echo "Documentation is available in markdown format under docs/ directory."
 
+compose-up: ## Run the timeline builder inside docker container using compose
+	docker compose -f infra/compose.yaml up --build
+
+compose-down: ## Shut down the docker compose services
+	docker compose -f infra/compose.yaml down
+
 clean: ## Clean up temporary and build directories
 	rm -rf .pytest_cache .coverage htmlcov .mypy_cache build dist packages/core/build packages/core/dist packages/core/*.egg-info

@@ -1,0 +1,11 @@
+.git
+.venv
+.pytest_cache
+.mypy_cache
+.coverage
+htmlcov
+dist
+packages/core/build
+packages/core/dist
+packages/core/*.egg-info
+diagrams_scratch/
