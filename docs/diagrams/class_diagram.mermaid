@@ -1,0 +1,48 @@
+classDiagram
+    class Timeline {
+        +events: list[LogEvent]
+        +start_time: datetime
+        +end_time: datetime
+        +sources: list[str]
+    }
+    class LogEvent {
+        +timestamp: datetime
+        +source: str
+        +level: str
+        +message: str
+        +metadata: dict
+        +raw_line: str
+    }
+    class LogSource {
+        +name: str
+        +format: str
+        +timezone: str
+        +file_path: str
+        +filters: dict
+    }
+    class BaseParser {
+        <<interface>>
+        +source_name: str
+        +timezone_str: str
+        +parse(line: str, line_number: int)* LogEvent
+    }
+    class NginxCombinedParser {
+        +parse(line: str, line_number: int) LogEvent
+    }
+    class SyslogParser {
+        +parse(line: str, line_number: int) LogEvent
+    }
+    class JournaldJsonParser {
+        +parse(line: str, line_number: int) LogEvent
+    }
+    class CustomRegexParser {
+        +pattern: str
+        +parse(line: str, line_number: int) LogEvent
+    }
+
+    Timeline "1" *-- "many" LogEvent
+    BaseParser <|-- NginxCombinedParser
+    BaseParser <|-- SyslogParser
+    BaseParser <|-- JournaldJsonParser
+    BaseParser <|-- CustomRegexParser
+    LogEvent <-- BaseParser : produces
