@@ -368,4 +368,6 @@ docs/_generated/
 
 
 !tests/fixtures
+!tests/fixtures/*.log
+!tests/fixtures/**/*.log
 !scripts
