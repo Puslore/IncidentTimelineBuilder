@@ -1,0 +1,26 @@
+sequenceDiagram
+    autonumber
+    actor User as User/CLI
+    participant Main as "CLI Orchestrator (app/cli/main.py)"
+    participant Registry as "Parser Factory (get_parser)"
+    participant Parser as "Parser (BaseParser Subclass)"
+    participant Event as LogEvent Model
+    
+    User->>Main: Runs cli build with sources.yaml
+    Main->>Main: Load configuration YAML
+    loop For each source in configuration
+        Main->>Registry: get_parser(format, source_name, timezone, pattern)
+        Registry->>Parser: Instantiate corresponding parser subclass
+        Registry-->>Main: Return parser instance
+        Main->>Main: Read source log file (line by line or stream)
+        loop For each line/record
+            Main->>Parser: parse(raw_line, line_number)
+            Parser->>Event: Instantiate LogEvent (timezone normalized to UTC)
+            Event-->>Parser: Return LogEvent
+            Parser-->>Main: Return LogEvent
+            Main->>Main: Append to events list
+        end
+    end
+    Main->>Main: Sort all events by timestamp (chronological)
+    Main->>Main: Format output JSON (timeline & stats)
+    Main-->>User: Output JSON to stdout

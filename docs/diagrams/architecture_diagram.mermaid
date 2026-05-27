@@ -1,0 +1,39 @@
+flowchart TD
+    subgraph UI ["Presentation & Orchestration Layer (app/cli/)"]
+        CLI[main.py] --> Config["config.yaml / sources.yaml"]
+    end
+
+    subgraph Core ["Domain Core Layer (packages/core/)"]
+        Factory["Parser Factory: get_parser"]
+        
+        subgraph Parsers [Log Parsers]
+            Base[BaseParser]
+            Nginx[NginxCombinedParser]
+            Syslog[SyslogParser]
+            Journald[JournaldJsonParser]
+            Custom[CustomRegexParser]
+        end
+
+        subgraph Models [Data Models]
+            LogEvent[LogEvent]
+            Timeline[Timeline]
+        end
+        
+        subgraph Exceptions [Error System]
+            ParseErr[ParseError]
+            ValErr[ValidationError]
+        end
+    end
+
+    CLI -->|Imports| Factory
+    CLI -->|Uses| Timeline
+    CLI -->|Catches| ParseErr
+    
+    Factory -->|Instantiates| Base
+    Base --> Nginx
+    Base --> Syslog
+    Base --> Journald
+    Base --> Custom
+    
+    Parsers -->|Produces| LogEvent
+    Timeline --> LogEvent
