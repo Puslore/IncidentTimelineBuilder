@@ -6,20 +6,36 @@ chronological timeline with timestamps normalized to UTC.
 ## Prerequisites
 
 - Python 3.12+
-- Dependencies: `typer`, `rich`, `pyyaml`, `python-dateutil`
+- Make (optional, for automation targets)
 
 ## Quick Start
 
+### 1. Setup Environment
+Create a virtual environment and install development dependencies:
 ```bash
-# 1. Create and activate a virtual environment
-python -m venv .venv
-source .venv/bin/activate
+make setup
+source .venv/bin/activate  # On Linux/macOS
+# or: .venv\Scripts\activate on Windows
+```
 
-# 2. Install dependencies
-pip install typer rich pyyaml python-dateutil
+### 2. Build & Install Core Package
+Build the core library package and install it locally:
+```bash
+make build-lib
+make install-lib-local
+```
 
-# 3. Run the tool
-PYTHONPATH=packages/core/src python app/cli/main.py tests/fixtures/sources.valid.yaml
+### 3. Run the CLI Tool
+Once the package is installed, run the CLI utility directly:
+```bash
+python app/cli/main.py tests/fixtures/sources.valid.yaml
+```
+*(Alternatively, you can run `PYTHONPATH=packages/core/src python app/cli/main.py tests/fixtures/sources.valid.yaml` without installing the package).*
+
+### 4. Run with Docker Compose
+To run the timeline builder inside a Docker container:
+```bash
+make compose-up
 ```
 
 ## Supported Log Formats
@@ -27,9 +43,9 @@ PYTHONPATH=packages/core/src python app/cli/main.py tests/fixtures/sources.valid
 | Format           | Status      |
 |------------------|-------------|
 | nginx-combined   | ✅ supported |
-| syslog           | 🔜 planned  |
-| journald-json    | 🔜 planned  |
-| custom (regex)   | 🔜 planned  |
+| syslog           | ✅ supported |
+| journald-json    | ✅ supported |
+| custom (regex)   | ✅ supported |
 
 ## Project Structure
 
