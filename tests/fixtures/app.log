@@ -1,0 +1,2 @@
+2026-05-27T11:23:15.999Z ERROR [app.db] Connection to postgres://db:5432/app failed: timeout after 30s
+2026-05-27T11:23:28.100Z INFO  [app.api] Request processed in 42ms

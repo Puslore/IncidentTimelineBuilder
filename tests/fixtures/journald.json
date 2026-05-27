@@ -1,0 +1,24 @@
+{
+    "__REALTIME_TIMESTAMP": "1779967382500000",
+    "_HOSTNAME": "webhost01",
+    "PRIORITY": "6",
+    "SYSLOG_IDENTIFIER": "sshd",
+    "_PID": 1234,
+    "MESSAGE": "Accepted publickey for alice from 192.168.1.10"
+}
+{
+    "__REALTIME_TIMESTAMP": "1779967390000000",
+    "_HOSTNAME": "webhost01",
+    "PRIORITY": "3",
+    "SYSLOG_IDENTIFIER": "app",
+    "_PID": 9876,
+    "MESSAGE": "database connection pool exhausted"
+}
+{
+    "__REALTIME_TIMESTAMP": "1779967400000000",
+    "_HOSTNAME": "webhost01",
+    "PRIORITY": "4",
+    "SYSLOG_IDENTIFIER": "systemd",
+    "_PID": 1,
+    "MESSAGE": "Unit app.service entered failed state"
+}

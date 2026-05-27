@@ -1,0 +1,25 @@
+sources:
+  - name: nginx-access
+    file: tests/fixtures/nginx-access.log
+    format: nginx-combined
+    timezone: Europe/Moscow
+
+  - name: syslog
+    file: tests/fixtures/syslog.log
+    format: syslog
+    timezone: Europe/Moscow
+
+  - name: journald
+    file: tests/fixtures/journald.jsonl
+    format: journald-json
+    timezone: UTC
+
+  - name: app
+    file: tests/fixtures/app.log
+    format: custom
+    pattern: '^(?P<timestamp>\d{4}-\d{2}-\d{2}T[\d:.]+Z)\s+(?P<level>\w+)\s+\[(?P<component>[^\]]+)\]\s+(?P<message>.+)$'
+    timezone: UTC
+
+filters:
+  default_level: DEBUG
+  exclude_sources: []
