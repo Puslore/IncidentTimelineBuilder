@@ -21,7 +21,7 @@ def test_cli_smoke_success() -> None:
     expected_path = project_root / 'tests' / 'fixtures' / 'expected' / 'timeline.json'
 
     result = subprocess.run(
-        [sys.executable, str(cli_path), str(config_path)],
+        [sys.executable, str(cli_path), 'build', str(config_path)],
         capture_output=True,
         text=True,
         env=env,

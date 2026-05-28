@@ -28,5 +28,8 @@ RUN pip install --no-cache-dir -r requirements.txt /tmp/*.whl
 COPY app/ /workspace/app/
 
 # Define entrypoint to run the CLI utility
+# Usage:
+#   docker run <image> parse /logs/access.log --format nginx-combined
+#   docker run <image> build /config/sources.yaml
 ENTRYPOINT ["python", "app/cli/main.py"]
-CMD ["tests/fixtures/sources.valid.yaml"]
+CMD ["--help"]

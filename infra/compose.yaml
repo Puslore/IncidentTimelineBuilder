@@ -1,10 +1,20 @@
 name: incident-timeline-builder
 
 services:
+  # Example 1: Parse log files directly (no YAML config needed)
   timeline:
     build:
       context: ..
       dockerfile: Dockerfile
     volumes:
-      - ../tests/fixtures:/workspace/tests/fixtures:ro
-    command: ["tests/fixtures/sources.valid.yaml"]
+      - ../tests/fixtures:/logs:ro
+    command: ["parse", "/logs/nginx-access.log", "/logs/syslog.log", "--timezone", "Europe/Moscow"]
+
+  # Example 2: Use YAML config for complex multi-source setups
+  # timeline-config:
+  #   build:
+  #     context: ..
+  #     dockerfile: Dockerfile
+  #   volumes:
+  #     - ../tests/fixtures:/workspace/tests/fixtures:ro
+  #   command: ["build", "tests/fixtures/sources.valid.yaml"]
