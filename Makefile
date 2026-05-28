@@ -26,7 +26,7 @@ test: $(VENV_BIN)/activate ## Run unit and smoke tests
 	PYTHONPATH=packages/core/src $(PYTHON) -m pytest tests/ -v
 
 coverage: $(VENV_BIN)/activate ## Run tests and print coverage report
-	PYTHONPATH=packages/core/src $(PYTHON) -m pytest tests/ -v --cov=packages/core/src/timeline_core --cov-report=term-missing
+	PYTHONPATH=packages/core/src $(PYTHON) -m pytest tests/ -v --cov=packages/core/src/timeline_core --cov-report=term-missing --cov-report=html
 
 check: $(VENV_BIN)/activate ## Run type checking and lint checks
 	PYTHONPATH=packages/core/src $(PYTHON) -m mypy packages/core/src/timeline_core
